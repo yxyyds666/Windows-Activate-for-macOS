@@ -2,25 +2,29 @@ import AppKit
 import Combine
 import SwiftUI
 
-/// 设置窗口：隐藏 macOS 的红绿灯，把 Windows 的 × / □ / ─ 放进标题栏左上角。
+/// 设置窗口。用无边框窗口自己画标题栏：Windows 的 × / □ / ─ 紧贴左上角，
+/// 而不是 macOS 的红绿灯，也没有系统标题栏留下的那段左边距。
 @MainActor
 public final class SettingsWindowController: NSObject, NSWindowDelegate {
     private let store: SettingsStore
     private let onClose: () -> Void
-    private let window: NSWindow
-    private let captionModel = CaptionModel()
+    let window: SettingsWindow
+    private let chrome: WindowChromeModel
     private var themeObserver: AnyCancellable?
 
     public init(store: SettingsStore, onClose: @escaping () -> Void = {}) {
         self.store = store
         self.onClose = onClose
-        self.window = NSWindow(
+        self.chrome = WindowChromeModel()
+        self.window = SettingsWindow(
             contentRect: NSRect(x: 0, y: 0, width: 780, height: 560),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+            styleMask: [.borderless, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
         super.init()
+
+        chrome.onCaptionAction = { [weak self] action in self?.perform(action) }
         configure()
         themeObserver = store.$settings
             .map(\.theme)
@@ -34,52 +38,36 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
             window.center()
         }
         window.makeKeyAndOrderFront(nil)
-        captionModel.isZoomed = window.isZoomed
+        // 从菜单栏应用切成普通应用的瞬间系统可能拒绝激活请求，
+        // 这里再强制排到最前，保证窗口不会藏在别的窗口后面。
+        window.orderFrontRegardless()
+        window.invalidateShadow()
+        chrome.isZoomed = window.isZoomed
     }
 
     private func configure() {
         window.title = AppInfo.displayName
-        window.titleVisibility = .hidden
-        window.titlebarAppearsTransparent = true
         window.isOpaque = false
         window.backgroundColor = .clear
+        window.hasShadow = true
+        window.isMovableByWindowBackground = false
         window.isReleasedWhenClosed = false
         window.tabbingMode = .disallowed
         window.minSize = NSSize(width: 720, height: 520)
         window.delegate = self
 
-        // 红绿灯藏起来，位置留给 Windows 风格的标题栏按钮。
-        for button: NSWindow.ButtonType in [.closeButton, .miniaturizeButton, .zoomButton] {
-            window.standardWindowButton(button)?.isHidden = true
-        }
-
-        installCaptionButtons()
-        installContent()
-    }
-
-    /// 按钮放在标题栏附件里：既能点，又保留系统的拖动、双击最大化和缩放边框。
-    private func installCaptionButtons() {
-        let accessory = NSTitlebarAccessoryViewController()
-        accessory.layoutAttribute = .leading
-        let host = NSHostingView(
-            rootView: CaptionAccessory(model: captionModel) { [weak self] action in
-                self?.perform(action)
-            }
-        )
-        host.frame = NSRect(
-            x: 0,
-            y: 0,
-            width: 3 * WinMetrics.captionButtonWidth,
-            height: WinMetrics.captionBarHeight
-        )
-        accessory.view = host
-        window.addTitlebarAccessoryViewController(accessory)
-    }
-
-    private func installContent() {
-        let hosting = NSHostingView(rootView: SettingsView(store: store))
+        let hosting = NSHostingView(rootView: rootView)
         hosting.safeAreaRegions = []
         window.contentView = hosting
+    }
+
+    private var rootView: some View {
+        SettingsView(store: store, chrome: chrome)
+            .clipShape(RoundedRectangle(cornerRadius: WinMetrics.windowCornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: WinMetrics.windowCornerRadius)
+                    .strokeBorder(WinColor.windowBorder, lineWidth: 1)
+            )
     }
 
     private func perform(_ action: WinCaptionAction) {
@@ -103,24 +91,31 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     public func windowDidResize(_ notification: Notification) {
-        captionModel.isZoomed = window.isZoomed
-    }
-
-    public func windowDidEndLiveResize(_ notification: Notification) {
-        captionModel.isZoomed = window.isZoomed
+        chrome.isZoomed = window.isZoomed
+        window.invalidateShadow()
     }
 }
 
+/// 无边框窗口默认不能成为主窗口，也不响应 performClose，这里补回来。
+final class SettingsWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { true }
+
+    override func performClose(_ sender: Any?) {
+        guard delegate?.windowShouldClose?(self) ?? true else { return }
+        close()
+    }
+}
+
+/// 标题栏状态：最大化时把 □ 换成还原字形。
 @MainActor
-private final class CaptionModel: ObservableObject {
-    @Published var isZoomed = false
-}
+public final class WindowChromeModel: ObservableObject {
+    @Published public var isZoomed = false
+    public var showsCaptionButtons: Bool
+    public var onCaptionAction: (WinCaptionAction) -> Void
 
-private struct CaptionAccessory: View {
-    @ObservedObject var model: CaptionModel
-    let action: (WinCaptionAction) -> Void
-
-    var body: some View {
-        WinCaptionButtons(isZoomed: model.isZoomed, action: action)
+    public init(showsCaptionButtons: Bool = true) {
+        self.showsCaptionButtons = showsCaptionButtons
+        self.onCaptionAction = { _ in }
     }
 }

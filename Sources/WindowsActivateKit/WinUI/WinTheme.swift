@@ -72,6 +72,9 @@ public enum WinColor {
     public static let closeHover = Color(nsColor: NSColor(hex: 0xC42B1C))
     public static let closePressed = Color(nsColor: NSColor(hex: 0xC42B1C, alpha: 0.9))
 
+    // 窗口边框
+    public static let windowBorder = token(light: 0x000000, lightAlpha: 0.16, dark: 0xFFFFFF, darkAlpha: 0.12)
+
     // 开关
     public static let toggleKnobOff = token(light: 0x5D5D5D, dark: 0xD1D1D1)
     public static let toggleKnobOn = token(light: 0xFFFFFF, dark: 0x000000, darkAlpha: 0.8956)
@@ -81,9 +84,10 @@ public enum WinColor {
 public enum WinMetrics {
     public static let controlCornerRadius: CGFloat = 4
     public static let overlayCornerRadius: CGFloat = 8
+    public static let windowCornerRadius: CGFloat = 8
     public static let controlHeight: CGFloat = 32
     public static let captionButtonWidth: CGFloat = 46
-    public static let captionBarHeight: CGFloat = 28
+    public static let captionBarHeight: CGFloat = 32
     public static let navigationPaneWidth: CGFloat = 196
 }
 

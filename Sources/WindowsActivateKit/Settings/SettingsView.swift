@@ -3,25 +3,18 @@ import SwiftUI
 /// 设置窗口的根视图：顶部是 Windows 式标题栏，左侧导航，右侧内容区。
 public struct SettingsView: View {
     @ObservedObject private var store: SettingsStore
-
-    private let showsInlineCaptionButtons: Bool
-    private let isZoomed: Bool
-    private let captionAction: (WinCaptionAction) -> Void
+    @ObservedObject private var chrome: WindowChromeModel
 
     @State private var selection: String
     @Environment(\.winUIRendersOffscreen) private var rendersOffscreen
 
     public init(
         store: SettingsStore,
-        initialPage: SettingsPage = .general,
-        showsInlineCaptionButtons: Bool = false,
-        isZoomed: Bool = false,
-        captionAction: @escaping (WinCaptionAction) -> Void = { _ in }
+        chrome: WindowChromeModel,
+        initialPage: SettingsPage = .general
     ) {
         self.store = store
-        self.showsInlineCaptionButtons = showsInlineCaptionButtons
-        self.isZoomed = isZoomed
-        self.captionAction = captionAction
+        self.chrome = chrome
         self._selection = State(initialValue: initialPage.id)
     }
 
@@ -39,21 +32,26 @@ public struct SettingsView: View {
         .frame(minWidth: 720, minHeight: 520)
     }
 
-    /// 标题栏：真实窗口里按钮由标题栏附件绘制，这里只占位；离屏截图时直接画出来。
+    /// 关闭 / 最大化 / 最小化紧贴左上角，右边留出拖动区（双击最大化）。
     private var captionBar: some View {
         HStack(spacing: 0) {
-            if showsInlineCaptionButtons {
-                WinCaptionButtons(isZoomed: isZoomed, action: captionAction)
-            } else {
-                Color.clear.frame(width: 3 * WinMetrics.captionButtonWidth, height: WinMetrics.captionBarHeight)
+            if chrome.showsCaptionButtons {
+                WinCaptionButtons(isZoomed: chrome.isZoomed) { chrome.onCaptionAction($0) }
             }
-            WinFlagBadge(size: 12)
+            ZStack(alignment: .leading) {
+                if !rendersOffscreen {
+                    WindowDragArea()
+                }
+                HStack(spacing: 8) {
+                    WinFlagBadge(size: 12)
+                    Text(AppInfo.displayName)
+                        .font(WinText.caption)
+                        .foregroundStyle(WinColor.textPrimary)
+                }
                 .padding(.leading, 12)
-            Text("Windows 激活")
-                .font(WinText.caption)
-                .foregroundStyle(WinColor.textPrimary)
-                .padding(.leading, 8)
-            Spacer(minLength: 0)
+                .allowsHitTesting(false)
+            }
+            .frame(maxWidth: .infinity)
         }
         .frame(height: WinMetrics.captionBarHeight)
     }

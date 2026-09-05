@@ -50,7 +50,7 @@ public enum SnapshotRenderer {
             defaults: UserDefaults(suiteName: "com.windowsactivate.snapshot") ?? .standard,
             storageKey: "snapshotSettings"
         )
-        return SettingsView(store: store, initialPage: page, showsInlineCaptionButtons: true)
+        return SettingsView(store: store, chrome: WindowChromeModel(), initialPage: page)
     }
 
     private static func desktop(language: WatermarkLanguage) -> some View {

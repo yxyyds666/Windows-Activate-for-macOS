@@ -59,8 +59,8 @@ public final class AppController: NSObject, NSApplicationDelegate {
         }
         // 打开设置时切成普通应用，这样有菜单栏和 Dock 图标；关掉后再退回后台。
         NSApp.setActivationPolicy(.regular)
-        NSApp.activate()
         settingsWindow?.show()
+        NSApp.activate()
     }
 
     private func settingsWindowDidClose() {

@@ -35,7 +35,7 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
     public func show() {
         apply(theme: store.settings.theme)
         if !window.isVisible {
-            window.center()
+            centerOnScreenUnderPointer()
         }
         window.makeKeyAndOrderFront(nil)
         // 从菜单栏应用切成普通应用的瞬间系统可能拒绝激活请求，
@@ -43,6 +43,22 @@ public final class SettingsWindowController: NSObject, NSWindowDelegate {
         window.orderFrontRegardless()
         window.invalidateShadow()
         chrome.isZoomed = window.isZoomed
+    }
+
+    /// 出现在鼠标所在的那块屏幕上；`NSWindow.center()` 认的是系统的主屏，多屏时容易跑到另一台显示器。
+    private func centerOnScreenUnderPointer() {
+        let pointer = NSEvent.mouseLocation
+        let screen = NSScreen.screens.first { $0.frame.contains(pointer) }
+            ?? NSScreen.main
+            ?? NSScreen.screens.first
+        guard let area = screen?.visibleFrame else {
+            window.center()
+            return
+        }
+        let size = window.frame.size
+        window.setFrameOrigin(
+            NSPoint(x: area.midX - size.width / 2, y: area.midY - size.height / 2)
+        )
     }
 
     private func configure() {

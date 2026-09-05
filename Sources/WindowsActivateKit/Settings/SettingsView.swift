@@ -51,7 +51,7 @@ public struct SettingsView: View {
                 .padding(.leading, 12)
                 .allowsHitTesting(false)
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(height: WinMetrics.captionBarHeight)
     }

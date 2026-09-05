@@ -23,15 +23,19 @@ done
 
 cd "$ROOT"
 
-echo "==> 编译（${CONFIGURATION}）"
 # ${arr[@]+...} 是为了兼容 bash 3.2：空数组在 set -u 下直接展开会报错。
-swift build -c "$CONFIGURATION" ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"}
-BIN_PATH="$(swift build -c "$CONFIGURATION" ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"} --show-bin-path)"
+BUILD_FLAGS=(-c "$CONFIGURATION" ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"})
+
+echo "==> 编译（${CONFIGURATION}）"
+swift build "${BUILD_FLAGS[@]}"
+BIN_PATH="$(swift build "${BUILD_FLAGS[@]}" --show-bin-path)"
 
 ICON="$ROOT/Resources/AppIcon.icns"
 if [[ ! -f "$ICON" ]]; then
     echo "==> 生成应用图标"
-    ICONSET="$(mktemp -d)/AppIcon.iconset"
+    ICON_TMP="$(mktemp -d)"
+    trap 'rm -rf "$ICON_TMP"' EXIT
+    ICONSET="$ICON_TMP/AppIcon.iconset"
     mkdir -p "$ICONSET"
     swift "$ROOT/Scripts/make-icon.swift" "$ICONSET" > /dev/null
     iconutil -c icns "$ICONSET" -o "$ICON"

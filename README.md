@@ -44,15 +44,17 @@ open dist/WindowsActivate.app
 cp -R dist/WindowsActivate.app /Applications/
 ```
 
-首次启动会自动打开设置窗口。之后从菜单栏的四格图标进入设置，或者按 ⌘, 。
+首次启动会自动打开设置窗口。之后从菜单栏的四格图标进入设置——菜单栏应用退到后台时没有菜单栏，所以 ⌘, 只在设置窗口已经打开时才有效。
 
 其他命令：
 
 ```bash
-swift test                                   # 单元测试
+swift test                                   # 单元测试（43 个）
 swift build && .build/debug/WindowsActivate --snapshot Snapshots   # 离屏渲染界面截图
 ./Scripts/build-app.sh --universal           # arm64 + x86_64
 ```
+
+CI 在 `macos-15` 上跑 `swift build` + `swift test` + 打包脚本，见 [.github/workflows/ci.yml](.github/workflows/ci.yml)。注意不能用 `macos-14` runner——那上面是 Xcode 15（Swift 5.10），认不了 `swift-tools-version: 6.0`。
 
 ## 设置项
 
@@ -98,7 +100,8 @@ Scripts/                     打包与图标脚本
 
 - “覆盖所有窗口”层级会压在下拉菜单、程序坞之上——Windows 的水印同样如此。介意的话切到“浮于普通窗口之上”
 - 设置界面文案只有简体中文；水印文案本身可以切成英文
-- 临时签名（ad-hoc）的 `.app` 首次打开可能被 Gatekeeper 拦，右键“打开”即可
+- `.app` 只做了临时签名（ad-hoc）、没有 Apple 公证，下载的压缩包首次打开会被 Gatekeeper 拦。**右键点图标 → 打开**即可，或者执行 `xattr -dr com.apple.quarantine /Applications/WindowsActivate.app`
+- 菜单栏应用退到后台时没有菜单栏，⌘, 只在设置窗口已打开时有效；想要全局热键需要额外授权，目前没做
 - 水印会被截图和录屏拍到，这也是 Windows 的行为
 
 ## 许可证

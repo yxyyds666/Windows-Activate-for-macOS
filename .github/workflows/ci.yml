@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    # 必须用 macos-15 或更新：macos-14 runner 上是 Xcode 15（Swift 5.10），
+    # 认不了 Package.swift 里的 swift-tools-version: 6.0。
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 工具链版本
+        run: |
+          swift --version
+          xcodebuild -version
+
+      - name: 构建
+        run: swift build
+
+      - name: 单元测试
+        run: swift test
+
+      - name: 打包 .app（验证脚本可用）
+        run: ./Scripts/build-app.sh

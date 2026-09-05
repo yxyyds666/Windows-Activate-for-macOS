@@ -4,7 +4,7 @@ import Foundation
 public enum AppInfo {
     public static let displayName = "Windows 激活"
     public static let bundleIdentifier = "com.windowsactivate.macos"
-    public static let repository = "https://github.com/yuxi/Windows-Activate-for-macOS"
+    public static let repository = "https://github.com/yxyyds666/Windows-Activate-for-macOS"
 
     public static var version: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"

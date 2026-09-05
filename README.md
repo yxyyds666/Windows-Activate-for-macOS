@@ -94,4 +94,6 @@ Scripts/                     打包与图标脚本
 
 ## 许可证
 
-[MIT](LICENSE)
+[自定义许可协议](LICENSE)：源码著作权归作者所有，**允许二次分发（含修改后的版本），但禁止商业使用**。分发时请保留协议全文与出处，并标明修改。个人学习、研究、教学与非营利用途不受限制。
+
+“Windows” 与 Windows 徽标是 Microsoft Corporation 的商标，本项目与 Microsoft 无任何隶属或背书关系。

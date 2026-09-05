@@ -57,7 +57,7 @@ struct AboutPage: View {
                     .buttonStyle(WinButtonStyle())
             }
 
-            Text("自定义许可协议 · 允许非商业二次分发 · 使用 Swift + SwiftUI 编写")
+            Text("BSD 2-Clause，仅限非商业用途 · 使用 Swift + SwiftUI 编写")
                 .font(WinText.caption)
                 .foregroundStyle(WinColor.textTertiary)
                 .padding(.top, 14)

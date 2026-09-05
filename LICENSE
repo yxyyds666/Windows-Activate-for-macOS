@@ -1,99 +1,10 @@
-Windows-Activate-for-macOS 自定义许可协议
-Windows-Activate-for-macOS Custom License
+Copyright (c) 2026, yxyyds666
+All rights reserved.
 
-版权所有 (c) 2026 yxyyds666，保留所有权利。
-Copyright (c) 2026 yxyyds666. All rights reserved.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-================================================================================
-中文（正式条款）
-================================================================================
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+    * Any redistribution, use, or modification is done solely for personal benefit and not for any commercial purpose or for monetary gain
 
-一、著作权归属
-本项目的全部源代码、资源文件与文档，其著作权均归作者所有。本协议不转让任何
-著作权，仅在下列条件下授予有限的、可撤销的、非独占的使用许可。
-
-二、允许的行为
-在完整遵守本协议的前提下，任何人可以：
-  1. 复制、使用、研究并修改本项目的源代码；
-  2. 二次分发本项目的原始副本或修改后的副本，包括源代码形式与编译后的
-     可执行文件。
-
-三、分发条件
-  1. 署名：分发时必须保留本协议全文与上述版权声明，并注明原始项目地址；
-  2. 修改说明：分发修改后的版本时，必须以显著方式标明其已被修改，且不得
-     暗示或声称原作者为该修改版本背书；
-  3. 一致性：以任何形式再分发时，必须附带本协议，不得附加与本协议相冲突的
-     额外条款或限制。
-
-四、禁止商业使用
-未经作者事先书面许可，禁止将本项目或其任何衍生作品用于商业用途。商业用途
-包括但不限于：
-  1. 出售、出租或许可本项目，或出售包含本项目代码的产品；
-  2. 将本项目作为营利性产品、服务的组成部分或其配套内容；
-  3. 借助本项目直接或间接获取收入，包括广告、捆绑分发、付费墙、增值服务等；
-  4. 在营利性机构的内部生产环境中部署使用。
-个人学习、技术研究、课堂教学与非营利用途不受本条限制。
-
-五、名称与商标
-本协议不授予任何使用作者姓名、账号或本项目名称进行宣传推广的权利。
-“Windows” 与 Windows 徽标是 Microsoft Corporation 的商标；本项目为独立的
-玩笑与界面练习项目，与 Microsoft 不存在任何隶属、赞助或背书关系。
-
-六、免责声明
-本项目按“现状”提供，不附带任何明示或默示的担保，包括但不限于对适销性、
-特定用途适用性以及非侵权的担保。在任何情况下，作者均不就因使用或无法使用
-本项目而产生的任何索赔、损害或其他责任承担责任。
-
-七、协议终止
-一旦违反本协议的任一条款，本协议所授予的全部许可即自动终止。
-
-================================================================================
-English (informative translation)
-================================================================================
-
-1. Ownership
-   All copyright in the source code, assets, and documentation of this project
-   remains with the author. This license transfers no copyright; it grants only
-   a limited, revocable, non-exclusive permission under the terms below.
-
-2. Permitted use
-   Subject to full compliance with this license, you may:
-   a. copy, use, study, and modify the source code;
-   b. redistribute original or modified copies, in source or binary form.
-
-3. Conditions of redistribution
-   a. Attribution: retain this license in full, the copyright notice above, and
-      a link to the original project.
-   b. Modification notice: clearly mark modified versions as modified, and do
-      not suggest that the author endorses them.
-   c. Consistency: include this license with every redistribution and impose no
-      additional terms that conflict with it.
-
-4. No commercial use
-   Commercial use of this project or of any derivative work is prohibited
-   without the author's prior written permission. Commercial use includes, but
-   is not limited to: selling, renting, or licensing the project or products
-   containing its code; incorporating it into for-profit products or services;
-   deriving revenue from it directly or indirectly (advertising, bundling,
-   paywalls, paid features); and deploying it in the production environment of
-   a for-profit organization. Personal study, research, teaching, and
-   non-profit use are not restricted.
-
-5. Names and trademarks
-   This license grants no right to use the author's name, account, or the
-   project name for promotion. "Windows" and the Windows logo are trademarks of
-   Microsoft Corporation; this project is an independent parody and UI exercise
-   with no affiliation with, sponsorship by, or endorsement from Microsoft.
-
-6. Disclaimer
-   THE PROJECT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE
-   USE OF THE PROJECT.
-
-7. Termination
-   Any breach of these terms automatically terminates the permissions granted.
-
-If the Chinese and English texts differ, the Chinese text prevails.
-中英文表述如有差异，以中文为准。
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

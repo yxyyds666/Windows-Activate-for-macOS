@@ -33,6 +33,6 @@
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>版权所有 (c) 2026 yxyyds666 · 允许非商业二次分发</string>
+	<string>版权所有 (c) 2026 yxyyds666 · BSD 2-Clause，仅限非商业用途</string>
 </dict>
 </plist>

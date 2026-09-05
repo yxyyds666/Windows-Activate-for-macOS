@@ -106,6 +106,12 @@ Scripts/                     打包与图标脚本
 
 ## 许可证
 
-[自定义许可协议](LICENSE)：源码著作权归作者所有，**允许二次分发（含修改后的版本），但禁止商业使用**。分发时请保留协议全文与出处，并标明修改。个人学习、研究、教学与非营利用途不受限制。
+[BSD 2-Clause + 非商业条款](LICENSE)，与
+[Windows-registry-for-macOS](https://github.com/yxyyds666/Windows-registry-for-macOS) 同一套
+（也就是 [Mousecape](https://github.com/alexzielenski/Mousecape) 用的那套）：**允许自由分发和修改**，
+源码与二进制分发都要保留版权声明和协议全文，**且仅限个人用途，不得用于商业目的或牟利**。
+
+因为多了这条非商业限制，它不属于 OSI 认定的开源协议，GitHub 只会显示成一个不具名的
+"License"。
 
 “Windows” 与 Windows 徽标是 Microsoft Corporation 的商标，本项目与 Microsoft 无任何隶属或背书关系。

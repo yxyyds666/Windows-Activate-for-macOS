@@ -17,6 +17,7 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
     public var showsOnAllDisplays: Bool
     public var overlayLevel: OverlayLevel
     public var theme: InterfaceTheme
+    public var activation: ActivationState
 
     public static let opacityRange: ClosedRange<Double> = 0.1...1.0
     public static let fontScaleRange: ClosedRange<Double> = 0.6...2.5
@@ -37,7 +38,8 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
         avoidsDockAndMenuBar: Bool = true,
         showsOnAllDisplays: Bool = true,
         overlayLevel: OverlayLevel = .aboveEverything,
-        theme: InterfaceTheme = .system
+        theme: InterfaceTheme = .system,
+        activation: ActivationState = ActivationState()
     ) {
         self.isEnabled = isEnabled
         self.preset = preset
@@ -54,6 +56,7 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
         self.showsOnAllDisplays = showsOnAllDisplays
         self.overlayLevel = overlayLevel
         self.theme = theme
+        self.activation = activation
     }
 
     /// 解码时缺少的字段回落到默认值，方便以后增加设置项而不丢弃旧配置。
@@ -78,7 +81,8 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
             avoidsDockAndMenuBar: value(.avoidsDockAndMenuBar, fallback.avoidsDockAndMenuBar),
             showsOnAllDisplays: value(.showsOnAllDisplays, fallback.showsOnAllDisplays),
             overlayLevel: value(.overlayLevel, fallback.overlayLevel),
-            theme: value(.theme, fallback.theme)
+            theme: value(.theme, fallback.theme),
+            activation: value(.activation, fallback.activation)
         )
     }
 
@@ -93,6 +97,11 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
             copy.preset = .activateWindows
         }
         return copy
+    }
+
+    /// 水印当前是否应该出现在桌面上：输过卡密“激活”之后就不再显示。
+    public var showsWatermark: Bool {
+        isEnabled && !activation.isActivated
     }
 
     /// 当前应当显示的水印文案。

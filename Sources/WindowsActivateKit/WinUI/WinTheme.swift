@@ -75,6 +75,10 @@ public enum WinColor {
     // 窗口边框
     public static let windowBorder = token(light: 0x000000, lightAlpha: 0.16, dark: 0xFFFFFF, darkAlpha: 0.12)
 
+    // 状态色
+    public static let success = token(light: 0x0F7B0F, dark: 0x6CCB5F)
+    public static let danger = token(light: 0xC42B1C, dark: 0xFF99A4)
+
     // 开关
     public static let toggleKnobOff = token(light: 0x5D5D5D, dark: 0xD1D1D1)
     public static let toggleKnobOn = token(light: 0xFFFFFF, dark: 0x000000, darkAlpha: 0.8956)

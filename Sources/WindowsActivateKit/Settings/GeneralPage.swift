@@ -11,10 +11,13 @@ struct GeneralPage: View {
             WinSettingsCard(
                 systemImage: "eye",
                 title: "显示桌面水印",
-                subtitle: "关掉就立刻从所有屏幕上收走水印"
+                subtitle: store.settings.activation.isActivated
+                    ? "已用卡密激活，水印已收起。想让它回来就去“激活”页取消激活"
+                    : "关掉就立刻从所有屏幕上收走水印"
             ) {
                 Toggle("显示桌面水印", isOn: $store.settings.isEnabled)
                     .toggleStyle(WinToggleStyle())
+                    .disabled(store.settings.activation.isActivated)
             }
 
             WinSettingsCard(

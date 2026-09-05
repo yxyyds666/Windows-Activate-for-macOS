@@ -28,9 +28,10 @@ public enum SnapshotRenderer {
 
         let pages: [(SettingsPage, Bool)] = [
             (.general, false),
+            (.activation, true),
             (.watermark, true),
             (.position, false),
-            (.about, true)
+            (.about, false)
         ]
         for (page, isDark) in pages {
             let name = "settings-\(page.rawValue)-\(isDark ? "dark" : "light").png"

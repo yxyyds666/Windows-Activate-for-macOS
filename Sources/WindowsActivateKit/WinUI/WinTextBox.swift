@@ -6,6 +6,7 @@ public struct WinTextBox: View {
     @Binding private var text: String
 
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.winUIRendersOffscreen) private var rendersOffscreen
     @FocusState private var isFocused: Bool
 
     public init(placeholder: String = "", text: Binding<String>) {
@@ -14,14 +15,26 @@ public struct WinTextBox: View {
     }
 
     public var body: some View {
-        TextField(placeholder, text: $text)
-            .textFieldStyle(.plain)
+        field
             .font(WinText.body)
             .foregroundStyle(isEnabled ? WinColor.textPrimary : WinColor.textDisabled)
-            .focused($isFocused)
             .padding(.horizontal, 11)
             .frame(height: WinMetrics.controlHeight)
             .background(WinInputBackground(isFocused: isFocused, isEnabled: isEnabled))
+    }
+
+    /// ImageRenderer 渲染不了 TextField，生成截图时用等价的静态文本占位。
+    @ViewBuilder
+    private var field: some View {
+        if rendersOffscreen {
+            Text(text.isEmpty ? placeholder : text)
+                .foregroundStyle(text.isEmpty ? WinColor.textTertiary : WinColor.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            TextField(placeholder, text: $text)
+                .textFieldStyle(.plain)
+                .focused($isFocused)
+        }
     }
 }
 
@@ -31,6 +44,7 @@ public struct WinTextArea: View {
     private let height: CGFloat
 
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.winUIRendersOffscreen) private var rendersOffscreen
     @FocusState private var isFocused: Bool
 
     public init(text: Binding<String>, height: CGFloat = 72) {
@@ -39,15 +53,26 @@ public struct WinTextArea: View {
     }
 
     public var body: some View {
-        TextEditor(text: $text)
+        editor
             .font(WinText.body)
             .foregroundStyle(isEnabled ? WinColor.textPrimary : WinColor.textDisabled)
-            .scrollContentBackground(.hidden)
-            .focused($isFocused)
             .padding(.horizontal, 7)
             .padding(.vertical, 6)
             .frame(height: height)
             .background(WinInputBackground(isFocused: isFocused, isEnabled: isEnabled))
+    }
+
+    @ViewBuilder
+    private var editor: some View {
+        if rendersOffscreen {
+            Text(text)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .padding(.horizontal, 4)
+        } else {
+            TextEditor(text: $text)
+                .scrollContentBackground(.hidden)
+                .focused($isFocused)
+        }
     }
 }
 

@@ -23,10 +23,20 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
     public func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
 
-        let toggle = NSMenuItem(title: "显示桌面水印", action: #selector(toggleWatermark), keyEquivalent: "")
-        toggle.target = self
-        toggle.state = store.settings.isEnabled ? .on : .off
-        menu.addItem(toggle)
+        if store.settings.activation.isActivated {
+            let activated = NSMenuItem(title: "已激活，水印已隐藏", action: nil, keyEquivalent: "")
+            activated.isEnabled = false
+            menu.addItem(activated)
+
+            let deactivate = NSMenuItem(title: "取消激活", action: #selector(deactivate), keyEquivalent: "")
+            deactivate.target = self
+            menu.addItem(deactivate)
+        } else {
+            let toggle = NSMenuItem(title: "显示桌面水印", action: #selector(toggleWatermark), keyEquivalent: "")
+            toggle.target = self
+            toggle.state = store.settings.isEnabled ? .on : .off
+            menu.addItem(toggle)
+        }
 
         menu.addItem(.separator())
 
@@ -43,6 +53,10 @@ public final class StatusItemController: NSObject, NSMenuDelegate {
 
     @objc private func toggleWatermark() {
         store.settings.isEnabled.toggle()
+    }
+
+    @objc private func deactivate() {
+        store.deactivate()
     }
 
     @objc private func showSettings() {

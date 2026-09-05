@@ -3,6 +3,7 @@ import SwiftUI
 /// 设置窗口的分页。
 public enum SettingsPage: String, CaseIterable, Identifiable {
     case general
+    case activation
     case watermark
     case position
     case about
@@ -12,6 +13,7 @@ public enum SettingsPage: String, CaseIterable, Identifiable {
     public var title: String {
         switch self {
         case .general: return "常规"
+        case .activation: return "激活"
         case .watermark: return "水印"
         case .position: return "位置"
         case .about: return "关于"
@@ -21,6 +23,7 @@ public enum SettingsPage: String, CaseIterable, Identifiable {
     var systemImage: String {
         switch self {
         case .general: return "gearshape"
+        case .activation: return "key"
         case .watermark: return "drop"
         case .position: return "arrow.up.left.and.arrow.down.right"
         case .about: return "info.circle"

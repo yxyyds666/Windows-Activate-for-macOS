@@ -27,9 +27,12 @@ public final class WatermarkOverlayController {
         refresh()
     }
 
+    /// 当前实际存在的水印窗口数量，供测试断言。
+    var overlayCount: Int { overlays.count }
+
     private func refresh() {
         let screens = targetScreens()
-        guard settings.isEnabled, !screens.isEmpty else {
+        guard settings.showsWatermark, !screens.isEmpty else {
             teardown()
             return
         }

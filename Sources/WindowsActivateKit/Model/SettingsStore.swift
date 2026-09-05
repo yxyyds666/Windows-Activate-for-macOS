@@ -36,6 +36,24 @@ public final class SettingsStore: ObservableObject {
         settings = WatermarkSettings()
     }
 
+    /// “激活”。不校验密钥——随便输什么都会成功，水印随之消失。
+    public func activate(with key: String) {
+        var updated = settings
+        updated.activation = ActivationState(
+            isActivated: true,
+            productKey: ProductKey.format(key),
+            activatedAt: Date()
+        )
+        settings = updated
+    }
+
+    /// 取消激活，把水印放回桌面。
+    public func deactivate() {
+        var updated = settings
+        updated.activation = ActivationState()
+        settings = updated
+    }
+
     private func write(_ value: WatermarkSettings) {
         guard let data = try? JSONEncoder().encode(value.sanitized()) else { return }
         defaults.set(data, forKey: storageKey)

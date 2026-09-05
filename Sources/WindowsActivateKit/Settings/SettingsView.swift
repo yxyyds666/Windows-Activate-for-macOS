@@ -32,12 +32,10 @@ public struct SettingsView: View {
         .frame(minWidth: 720, minHeight: 520)
     }
 
-    /// 关闭 / 最大化 / 最小化紧贴左上角，右边留出拖动区（双击最大化）。
+    /// 标题栏：左侧是徽标与标题（同时是拖动区，双击最大化），
+    /// 最小化 / 最大化 / 关闭按 Windows 的排布放在右上角。
     private var captionBar: some View {
         HStack(spacing: 0) {
-            if chrome.showsCaptionButtons {
-                WinCaptionButtons(isZoomed: chrome.isZoomed) { chrome.onCaptionAction($0) }
-            }
             ZStack(alignment: .leading) {
                 if !rendersOffscreen {
                     WindowDragArea()
@@ -52,6 +50,10 @@ public struct SettingsView: View {
                 .allowsHitTesting(false)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            if chrome.showsCaptionButtons {
+                WinCaptionButtons(isZoomed: chrome.isZoomed) { chrome.onCaptionAction($0) }
+            }
         }
         .frame(height: WinMetrics.captionBarHeight)
     }
@@ -100,6 +102,7 @@ public struct SettingsView: View {
     private var page: some View {
         switch currentPage {
         case .general: GeneralPage(store: store)
+        case .activation: ActivationPage(store: store)
         case .watermark: WatermarkPage(store: store)
         case .position: PositionPage(store: store)
         case .about: AboutPage(store: store)

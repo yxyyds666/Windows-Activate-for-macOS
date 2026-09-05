@@ -6,8 +6,8 @@ public enum WinCaptionAction {
     case minimize
 }
 
-/// Windows 的标题栏按钮组：关闭、最大化/还原、最小化。
-/// 按需求放在窗口左上角，用 Windows 的 × 字形代替 macOS 的红绿灯。
+/// Windows 的标题栏按钮组：最小化、最大化/还原、关闭。
+/// 按 Windows 的排布放在窗口右上角，用 Windows 的字形而不是 macOS 的红绿灯。
 public struct WinCaptionButtons: View {
     private let isZoomed: Bool
     private let action: (WinCaptionAction) -> Void
@@ -19,9 +19,9 @@ public struct WinCaptionButtons: View {
 
     public var body: some View {
         HStack(spacing: 0) {
-            CaptionButton(kind: .close, isZoomed: isZoomed, label: "关闭") { action(.close) }
-            CaptionButton(kind: .maximize, isZoomed: isZoomed, label: isZoomed ? "还原" : "最大化") { action(.maximize) }
             CaptionButton(kind: .minimize, isZoomed: isZoomed, label: "最小化") { action(.minimize) }
+            CaptionButton(kind: .maximize, isZoomed: isZoomed, label: isZoomed ? "还原" : "最大化") { action(.maximize) }
+            CaptionButton(kind: .close, isZoomed: isZoomed, label: "关闭") { action(.close) }
         }
         .frame(height: WinMetrics.captionBarHeight)
     }

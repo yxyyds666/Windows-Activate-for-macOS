@@ -12,11 +12,10 @@ public struct WatermarkView: View {
 
     private var scale: CGFloat { CGFloat(settings.fontScale) }
     private var language: ResolvedLanguage { settings.language.resolve() }
-    private var alignment: HorizontalAlignment { settings.corner.isTrailing ? .trailing : .leading }
-    private var textAlignment: TextAlignment { settings.corner.isTrailing ? .trailing : .leading }
 
     public var body: some View {
-        VStack(alignment: alignment, spacing: 6 * scale) {
+        // Windows 的水印两行是左对齐的（副标题通常更长），整块再贴到屏幕角落。
+        VStack(alignment: .leading, spacing: 6 * scale) {
             if !text.title.isEmpty {
                 Text(text.title)
                     .font(Font(WinFont.watermark(size: 26 * scale, language: language)))
@@ -27,7 +26,7 @@ public struct WatermarkView: View {
                     .lineSpacing(3 * scale)
             }
         }
-        .multilineTextAlignment(textAlignment)
+        .multilineTextAlignment(.leading)
         .foregroundStyle(Color.white.opacity(settings.opacity))
         .shadow(color: .black.opacity(settings.showsShadow ? 0.5 : 0), radius: 4 * scale, x: 0, y: 1)
         .fixedSize()

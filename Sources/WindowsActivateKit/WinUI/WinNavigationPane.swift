@@ -47,8 +47,7 @@ public struct WinNavigationPane: View {
         var body: some View {
             Button(action: action) {
                 HStack(spacing: 14) {
-                    Image(systemName: item.systemImage)
-                        .font(.system(size: 15, weight: .regular))
+                    WinIcon(item.systemImage, size: 15)
                         .foregroundStyle(WinColor.textPrimary)
                         .frame(width: 16, height: 16)
                     Text(item.title)

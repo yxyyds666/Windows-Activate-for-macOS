@@ -11,8 +11,8 @@ public enum WatermarkPreset: String, Codable, CaseIterable, Sendable {
 
     public var displayName: String {
         switch self {
-        case .activateWindows: return "Windows 11 / 10：激活 Windows"
-        case .notGenuine: return "Windows 7：副本不是正版"
+        case .activateWindows: return "Windows 11 / 10"
+        case .notGenuine: return "Windows 7"
         case .custom: return "自定义文案"
         }
     }

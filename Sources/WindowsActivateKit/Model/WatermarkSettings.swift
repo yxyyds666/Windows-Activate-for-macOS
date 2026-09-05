@@ -20,7 +20,7 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
 
     public static let opacityRange: ClosedRange<Double> = 0.1...1.0
     public static let fontScaleRange: ClosedRange<Double> = 0.6...2.5
-    public static let marginRange: ClosedRange<Double> = 0...300
+    public static let marginRange: ClosedRange<Double> = 0...200
 
     public init(
         isEnabled: Bool = true,

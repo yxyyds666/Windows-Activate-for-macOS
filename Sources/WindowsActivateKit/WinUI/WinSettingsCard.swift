@@ -59,8 +59,7 @@ public struct WinSettingsCard<Control: View>: View {
     private var header: some View {
         HStack(spacing: 16) {
             if let systemImage {
-                Image(systemName: systemImage)
-                    .font(.system(size: 16, weight: .regular))
+                WinIcon(systemImage, size: 16)
                     .foregroundStyle(WinColor.textSecondary)
                     .frame(width: 20, height: 20)
             }

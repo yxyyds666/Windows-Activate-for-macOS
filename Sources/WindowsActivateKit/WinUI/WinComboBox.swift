@@ -108,13 +108,15 @@ public struct WinComboBox<Value: Hashable>: View {
 /// 记住下拉框对应的 AppKit 视图，用来把菜单弹在控件正下方。
 final class ComboBoxAnchor: ObservableObject {
     weak var view: NSView?
-    private var retained: AnyObject?
 
+    /// `popUp` 是模态的，菜单关掉才返回；NSMenuItem.target 是弱引用，
+    /// 所以这里用局部强引用把 target 撑过整段展开过程，返回后自然释放。
     func present(menu: NSMenu, retaining target: AnyObject) {
         guard let view else { return }
-        retained = target
-        menu.minimumWidth = view.bounds.width
-        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: 0), in: view)
+        withExtendedLifetime(target) {
+            menu.minimumWidth = view.bounds.width
+            menu.popUp(positioning: nil, at: NSPoint(x: 0, y: 0), in: view)
+        }
     }
 }
 

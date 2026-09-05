@@ -23,6 +23,24 @@ public enum WinFont {
     }
 
     private static func font(families: [String], size: CGFloat, weight: NSFont.Weight) -> NSFont {
+        let key = CacheKey(families: families, size: size, weight: weight.rawValue)
+        if let cached = cache[key] { return cached }
+        let resolved = resolve(families: families, size: size, weight: weight)
+        cache[key] = resolved
+        return resolved
+    }
+
+    /// 拼一次 cascadeList 描述符约 0.03 ms，而水印视图每次求值都要拿两号字，所以缓存起来。
+    /// 只在主线程的视图求值里访问。
+    private static var cache: [CacheKey: NSFont] = [:]
+
+    private struct CacheKey: Hashable {
+        let families: [String]
+        let size: CGFloat
+        let weight: CGFloat
+    }
+
+    private static func resolve(families: [String], size: CGFloat, weight: NSFont.Weight) -> NSFont {
         let base: NSFont
         if let family = families.first(where: { availableFamilies.contains($0) }),
            let matched = NSFont(descriptor: descriptor(family: family, weight: weight), size: size) {

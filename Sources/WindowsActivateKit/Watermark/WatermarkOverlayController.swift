@@ -11,6 +11,7 @@ public final class WatermarkOverlayController {
 
     private var overlays: [Overlay] = []
     private var settings = WatermarkSettings()
+    private var appliedAppearance: WatermarkAppearance?
     private var observers: [(center: NotificationCenter, token: NSObjectProtocol)] = []
 
     public init() {
@@ -21,16 +22,28 @@ public final class WatermarkOverlayController {
         observers.forEach { $0.center.removeObserver($0.token) }
     }
 
-    /// 应用一份新的设置并立即刷新所有屏幕上的水印。
+    /// 应用一份新的设置并刷新所有屏幕上的水印。
+    ///
+    /// 设置窗口里任何一个改动都会走到这里，所以先比一次“水印长什么样”：
+    /// 换设置界面主题这类和桌面无关的字段变了就直接返回，
+    /// 省掉每块屏幕一轮的重排和窗口服务器往返。
     public func apply(_ settings: WatermarkSettings) {
-        self.settings = settings.sanitized()
+        let sanitized = settings.sanitized()
+        let appearance = sanitized.watermarkAppearance
+        guard appliedAppearance != appearance else { return }
+        appliedAppearance = appearance
+        self.settings = sanitized
         refresh()
     }
 
     /// 当前实际存在的水印窗口数量，供测试断言。
     var overlayCount: Int { overlays.count }
 
+    /// 真正重排过多少次，供测试确认 diff 生效。
+    private(set) var refreshCount = 0
+
     private func refresh() {
+        refreshCount += 1
         let screens = targetScreens()
         guard settings.showsWatermark, !screens.isEmpty else {
             teardown()

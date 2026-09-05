@@ -19,9 +19,22 @@ struct AboutPage: View {
             WinSettingsCard(
                 systemImage: "keyboard",
                 title: "菜单栏图标",
-                subtitle: "关掉设置窗口后，可以从菜单栏的四格图标里再打开，或者用 ⌘, 呼出。"
+                subtitle: "关掉设置窗口后，从菜单栏的四格图标再打开。菜单栏应用退到后台时没有菜单栏，所以 ⌘, 只在窗口已经打开时有效。"
             ) {
                 EmptyView()
+            }
+
+            WinSettingsCard(
+                systemImage: "link",
+                title: "项目地址",
+                subtitle: AppInfo.repository
+            ) {
+                Button("打开") {
+                    if let url = URL(string: AppInfo.repository) {
+                        NSWorkspace.shared.open(url)
+                    }
+                }
+                .buttonStyle(WinButtonStyle())
             }
 
             WinSectionHeader("重置与退出")

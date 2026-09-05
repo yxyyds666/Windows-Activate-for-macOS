@@ -45,6 +45,7 @@ struct ActivationPage: View {
                 ) {
                     HStack(spacing: 10) {
                         WinTextBox(placeholder: ProductKey.placeholder, text: keyBinding)
+                            .accessibilityLabel("产品密钥")
                         Button(isActivating ? "正在激活…" : "激活") { activate() }
                             .buttonStyle(WinButtonStyle(.accent))
                             .disabled(keyInput.isEmpty || isActivating)

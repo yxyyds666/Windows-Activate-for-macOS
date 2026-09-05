@@ -33,8 +33,24 @@ final class ActivationTests: XCTestCase {
 
         XCTAssertTrue(store.settings.activation.isActivated)
         XCTAssertFalse(store.settings.showsWatermark)
-        XCTAssertEqual(store.settings.activation.productKey, "AAAAA-BBBBB-CCCCC-DDDDD-EEEEE")
         XCTAssertNotNil(store.settings.activation.activatedAt)
+    }
+
+    /// 输入框长得就是 Windows 的正版密钥框，用户可能真的贴进一把有效密钥，
+    /// 所以只记掩码，原文不写进 UserDefaults。
+    func testProductKeyIsNeverStoredInClearText() {
+        let store = makeStore()
+        store.activate(with: "MYREAL-LICENSE-KEY42")
+
+        let stored = store.settings.activation.productKey
+        // 去掉连字符后是 18 个字符，分成 5+5+5+3。
+        XCTAssertEqual(stored, "•••••-•••••-•••••-•••")
+        XCTAssertFalse(stored.contains("MYREAL"))
+        XCTAssertFalse(stored.contains("42"))
+
+        let raw = defaults.data(forKey: "settings").flatMap { String(data: $0, encoding: .utf8) } ?? ""
+        XCTAssertFalse(raw.isEmpty, "设置应当已经落盘")
+        XCTAssertFalse(raw.uppercased().contains("MYREAL"), "落盘内容里不应出现密钥原文")
     }
 
     /// 无论输入什么都能激活，这是这个项目故意做成的行为。
@@ -63,7 +79,7 @@ final class ActivationTests: XCTestCase {
 
         let reloaded = makeStore()
         XCTAssertTrue(reloaded.settings.activation.isActivated)
-        XCTAssertEqual(reloaded.settings.activation.productKey, "AAAAA-BBBBB")
+        XCTAssertEqual(reloaded.settings.activation.productKey, "•••••-•••••")
         XCTAssertFalse(reloaded.settings.showsWatermark)
     }
 

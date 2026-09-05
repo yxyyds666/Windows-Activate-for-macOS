@@ -26,10 +26,31 @@ final class WatermarkSettingsTests: XCTestCase {
         XCTAssertEqual(sanitized.verticalMargin, WatermarkSettings.marginRange.upperBound)
     }
 
-    func testSanitizedFallsBackWhenCustomTextIsEmpty() {
+    /// sanitized() 只夹取数值，不再悄悄把 preset 改回预设：
+    /// 否则界面上显示“自定义文案”，磁盘里已经变成 Windows 11 / 10，重启后用户的选择就丢了。
+    func testSanitizedKeepsCustomPresetWhenTextIsEmpty() {
         var settings = WatermarkSettings()
         settings.preset = .custom
-        XCTAssertEqual(settings.sanitized().preset, .activateWindows)
+        XCTAssertEqual(settings.sanitized().preset, .custom)
+    }
+
+    /// 自定义文案两栏都空着时，显示上回落到预设文案，不会出现一块空白水印。
+    func testEmptyCustomTextFallsBackToPresetWording() {
+        var settings = WatermarkSettings()
+        settings.preset = .custom
+        let text = settings.resolvedText(preferredLanguages: ["zh-Hans-CN"])
+        XCTAssertEqual(text.title, "激活 Windows")
+        XCTAssertEqual(text.subtitle, "转到“设置”以激活 Windows。")
+    }
+
+    func testSanitizedCapsOverlongCustomText() {
+        var settings = WatermarkSettings()
+        settings.customTitle = String(repeating: "标", count: 500)
+        settings.customSubtitle = String(repeating: "文", count: 2_000)
+
+        let sanitized = settings.sanitized()
+        XCTAssertEqual(sanitized.customTitle.count, WatermarkSettings.maxCustomTitleLength)
+        XCTAssertEqual(sanitized.customSubtitle.count, WatermarkSettings.maxCustomSubtitleLength)
     }
 
     func testCodableRoundTrip() throws {

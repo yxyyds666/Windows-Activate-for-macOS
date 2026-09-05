@@ -9,8 +9,11 @@ enum SnapshotError: Error {
 /// 离屏渲染出界面截图，用来在不打断使用的情况下检查排版。
 @MainActor
 public enum SnapshotRenderer {
+    private static let snapshotSuite = "com.windowsactivate.snapshot"
+
     public static func renderAll(into directory: URL) throws -> [URL] {
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { UserDefaults().removePersistentDomain(forName: snapshotSuite) }
         var written: [URL] = []
 
         written.append(try render(
@@ -48,7 +51,7 @@ public enum SnapshotRenderer {
 
     private static func settings(page: SettingsPage) -> some View {
         let store = SettingsStore(
-            defaults: UserDefaults(suiteName: "com.windowsactivate.snapshot") ?? .standard,
+            defaults: UserDefaults(suiteName: snapshotSuite) ?? .standard,
             storageKey: "snapshotSettings"
         )
         return SettingsView(store: store, chrome: WindowChromeModel(), initialPage: page)

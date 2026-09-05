@@ -1,7 +1,6 @@
 import ServiceManagement
 
 /// 开机自启。SMAppService 只认签名过的 .app，命令行直接跑 SwiftPM 产物时不可用。
-@MainActor
 public enum LaunchAtLogin {
     public static var isAvailable: Bool {
         Bundle.main.bundleURL.pathExtension == "app"
@@ -10,6 +9,14 @@ public enum LaunchAtLogin {
     public static var isEnabled: Bool {
         guard isAvailable else { return false }
         return SMAppService.mainApp.status == .enabled
+    }
+
+    /// register / unregister 要跨进程走 launchd，别放在 SwiftUI 的视图更新里同步执行，
+    /// 这里挪到后台线程，调用方拿到结果后再回主线程刷状态。
+    public static func setInBackground(_ enabled: Bool) async throws {
+        try await Task.detached(priority: .userInitiated) {
+            try set(enabled)
+        }.value
     }
 
     public static func set(_ enabled: Bool) throws {

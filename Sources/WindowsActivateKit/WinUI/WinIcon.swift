@@ -26,10 +26,23 @@ public struct WinIcon: View {
     }
 
     private static func symbol(_ name: String, size: CGFloat, weight: NSFont.Weight) -> NSImage? {
+        let key = CacheKey(name: name, size: size, weight: weight.rawValue)
+        if let cached = cache[key] { return cached }
         guard let base = NSImage(systemSymbolName: name, accessibilityDescription: nil) else { return nil }
         let configuration = NSImage.SymbolConfiguration(pointSize: size, weight: weight)
         guard let configured = base.withSymbolConfiguration(configuration) else { return nil }
         configured.isTemplate = true
+        cache[key] = configured
         return configured
+    }
+
+    /// 重建一个符号图标约 0.09 ms，而一页设置里十来个图标会随任意状态变化整体重建，
+    /// 所以按名称 + 尺寸 + 字重缓存。只在主线程的视图求值里访问。
+    private static var cache: [CacheKey: NSImage] = [:]
+
+    private struct CacheKey: Hashable {
+        let name: String
+        let size: CGFloat
+        let weight: CGFloat
     }
 }

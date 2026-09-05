@@ -22,6 +22,8 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
     public static let opacityRange: ClosedRange<Double> = 0.1...1.0
     public static let fontScaleRange: ClosedRange<Double> = 0.6...2.5
     public static let marginRange: ClosedRange<Double> = 0...200
+    public static let maxCustomTitleLength = 120
+    public static let maxCustomSubtitleLength = 400
 
     public init(
         isEnabled: Bool = true,
@@ -87,15 +89,17 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
     }
 
     /// 把数值收敛到合法区间，避免手工改配置文件后出现异常显示。
+    ///
+    /// 这里只做“夹取”，不改写 preset 之类的语义字段——否则写盘时悄悄改掉一份和内存不一样的配置，
+    /// 界面显示的和磁盘上存的就分叉了。
     public func sanitized() -> WatermarkSettings {
         var copy = self
         copy.opacity = opacity.clamped(to: Self.opacityRange)
         copy.fontScale = fontScale.clamped(to: Self.fontScaleRange)
         copy.horizontalMargin = horizontalMargin.clamped(to: Self.marginRange)
         copy.verticalMargin = verticalMargin.clamped(to: Self.marginRange)
-        if copy.preset == .custom && copy.customTitle.isEmpty && copy.customSubtitle.isEmpty {
-            copy.preset = .activateWindows
-        }
+        copy.customTitle = String(customTitle.prefix(Self.maxCustomTitleLength))
+        copy.customSubtitle = String(customSubtitle.prefix(Self.maxCustomSubtitleLength))
         return copy
     }
 
@@ -104,10 +108,33 @@ public struct WatermarkSettings: Codable, Equatable, Sendable {
         isEnabled && !activation.isActivated
     }
 
+    /// 只包含影响桌面水印呈现的字段。
+    ///
+    /// 覆盖层拿它来判断需不需要重排：换设置界面主题、改激活时间这类字段变了也不用动窗口。
+    public var watermarkAppearance: WatermarkAppearance {
+        WatermarkAppearance(
+            isVisible: showsWatermark,
+            text: resolvedText(),
+            opacity: opacity,
+            fontScale: fontScale,
+            corner: corner,
+            horizontalMargin: horizontalMargin,
+            verticalMargin: verticalMargin,
+            showsShadow: showsShadow,
+            avoidsDockAndMenuBar: avoidsDockAndMenuBar,
+            showsOnAllDisplays: showsOnAllDisplays,
+            overlayLevel: overlayLevel
+        )
+    }
+
     /// 当前应当显示的水印文案。
     public func resolvedText(preferredLanguages: [String] = Locale.preferredLanguages) -> WatermarkText {
         let resolved = language.resolve(preferredLanguages: preferredLanguages)
         guard preset == .custom else { return preset.text(language: resolved) }
+        // 自定义文案两栏都空着时回落到预设，避免桌面上留一块什么都没有的水印。
+        guard !customTitle.isEmpty || !customSubtitle.isEmpty else {
+            return WatermarkPreset.activateWindows.text(language: resolved)
+        }
         return WatermarkText(title: customTitle, subtitle: customSubtitle)
     }
 }
@@ -116,4 +143,19 @@ extension Comparable {
     func clamped(to range: ClosedRange<Self>) -> Self {
         min(max(self, range.lowerBound), range.upperBound)
     }
+}
+
+/// 决定桌面水印长什么样、贴在哪里的那一组值。
+public struct WatermarkAppearance: Equatable, Sendable {
+    public let isVisible: Bool
+    public let text: WatermarkText
+    public let opacity: Double
+    public let fontScale: Double
+    public let corner: WatermarkCorner
+    public let horizontalMargin: Double
+    public let verticalMargin: Double
+    public let showsShadow: Bool
+    public let avoidsDockAndMenuBar: Bool
+    public let showsOnAllDisplays: Bool
+    public let overlayLevel: OverlayLevel
 }

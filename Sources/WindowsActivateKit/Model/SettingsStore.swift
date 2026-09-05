@@ -37,11 +37,12 @@ public final class SettingsStore: ObservableObject {
     }
 
     /// “激活”。不校验密钥——随便输什么都会成功，水印随之消失。
+    /// 只记掩码，原始输入不写进磁盘。
     public func activate(with key: String) {
         var updated = settings
         updated.activation = ActivationState(
             isActivated: true,
-            productKey: ProductKey.format(key),
+            productKey: ProductKey.masked(key),
             activatedAt: Date()
         )
         settings = updated

@@ -1,28 +1,24 @@
 import SwiftUI
 
-/// WinUI 的按钮：标准、强调、无边框三种变体，尺寸与悬停反馈都照 Windows 11 来。
+/// WinUI 的按钮：标准与强调两种变体，尺寸和悬停反馈都照 Windows 11 来。
 public struct WinButtonStyle: ButtonStyle {
     public enum Variant {
         case standard
         case accent
-        case subtle
     }
 
     private let variant: Variant
-    private let fillsWidth: Bool
 
-    public init(_ variant: Variant = .standard, fillsWidth: Bool = false) {
+    public init(_ variant: Variant = .standard) {
         self.variant = variant
-        self.fillsWidth = fillsWidth
     }
 
     public func makeBody(configuration: Configuration) -> some View {
-        Content(variant: variant, fillsWidth: fillsWidth, configuration: configuration)
+        Content(variant: variant, configuration: configuration)
     }
 
     private struct Content: View {
         let variant: Variant
-        let fillsWidth: Bool
         let configuration: ButtonStyleConfiguration
 
         @Environment(\.isEnabled) private var isEnabled
@@ -33,7 +29,7 @@ public struct WinButtonStyle: ButtonStyle {
                 .font(WinText.body)
                 .foregroundStyle(foreground)
                 .padding(.horizontal, 12)
-                .frame(maxWidth: fillsWidth ? .infinity : nil, minHeight: WinMetrics.controlHeight)
+                .frame(minHeight: WinMetrics.controlHeight)
                 .background(shape.fill(background))
                 .overlay(shape.strokeBorder(border, lineWidth: 1))
                 .contentShape(Rectangle())
@@ -48,7 +44,7 @@ public struct WinButtonStyle: ButtonStyle {
         private var foreground: Color {
             guard isEnabled else { return WinColor.textDisabled }
             switch variant {
-            case .standard, .subtle: return WinColor.textPrimary
+            case .standard: return WinColor.textPrimary
             case .accent: return WinColor.textOnAccent
             }
         }
@@ -63,10 +59,6 @@ public struct WinButtonStyle: ButtonStyle {
                 guard isEnabled else { return WinColor.accentDisabled }
                 if configuration.isPressed { return WinColor.accentPressed }
                 return isHovering ? WinColor.accentHover : WinColor.accent
-            case .subtle:
-                guard isEnabled else { return .clear }
-                if configuration.isPressed { return WinColor.subtleFillPressed }
-                return isHovering ? WinColor.subtleFillHover : .clear
             }
         }
 
@@ -89,8 +81,6 @@ public struct WinButtonStyle: ButtonStyle {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-            case .subtle:
-                return LinearGradient(colors: [.clear, .clear], startPoint: .top, endPoint: .bottom)
             }
         }
     }

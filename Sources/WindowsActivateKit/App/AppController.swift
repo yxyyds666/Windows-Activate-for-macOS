@@ -7,13 +7,15 @@ public final class AppController: NSObject, NSApplicationDelegate {
     private static let hasLaunchedKey = "hasLaunchedBefore"
 
     private let store: SettingsStore
+    private let defaults: UserDefaults
     private let overlay = WatermarkOverlayController()
     private var statusItem: StatusItemController?
     private var settingsWindow: SettingsWindowController?
     private var settingsObserver: AnyCancellable?
 
-    public init(store: SettingsStore? = nil) {
-        self.store = store ?? SettingsStore()
+    public init(store: SettingsStore? = nil, defaults: UserDefaults = .standard) {
+        self.store = store ?? SettingsStore(defaults: defaults)
+        self.defaults = defaults
         super.init()
     }
 
@@ -25,13 +27,12 @@ public final class AppController: NSObject, NSApplicationDelegate {
             self?.showSettings()
         }
 
+        // @Published 在订阅时会立刻投递当前值，所以这一次订阅已经把水印贴上去了。
         settingsObserver = store.$settings.sink { [weak self] settings in
             self?.overlay.apply(settings)
         }
-        overlay.apply(store.settings)
 
         // 第一次启动时把设置窗口打开，否则用户只看到水印，不知道去哪里关。
-        let defaults = UserDefaults.standard
         if !defaults.bool(forKey: Self.hasLaunchedKey) {
             defaults.set(true, forKey: Self.hasLaunchedKey)
             showSettings()

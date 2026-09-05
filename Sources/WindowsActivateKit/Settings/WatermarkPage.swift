@@ -18,6 +18,7 @@ struct WatermarkPage: View {
                     options: WatermarkPreset.allCases.map { .init($0, $0.displayName) },
                     width: 170
                 )
+                .accessibilityLabel("文案预设")
             }
 
             WinSettingsCard(
@@ -30,21 +31,24 @@ struct WatermarkPage: View {
                     options: WatermarkLanguage.allCases.map { .init($0, $0.displayName) },
                     width: 150
                 )
+                .accessibilityLabel("文案语言")
             }
             .disabled(store.settings.preset == .custom)
 
             if store.settings.preset == .custom {
                 WinSettingsCard(systemImage: "textformat", title: "标题", placement: .below) {
-                    WinTextBox(placeholder: "激活 Windows", text: $store.settings.customTitle)
+                    WinTextBox(placeholder: "激活 Windows", text: titleBinding)
+                        .accessibilityLabel("自定义标题")
                 }
 
                 WinSettingsCard(
                     systemImage: "text.alignleft",
                     title: "正文",
-                    subtitle: "可以换行，会跟标题一起右对齐",
+                    subtitle: "可以换行，会跟标题一起左对齐",
                     placement: .below
                 ) {
-                    WinTextArea(text: $store.settings.customSubtitle, height: 68)
+                    WinTextArea(text: subtitleBinding, height: 68)
+                        .accessibilityLabel("自定义正文")
                 }
             }
 
@@ -56,6 +60,7 @@ struct WatermarkPage: View {
                     in: WatermarkSettings.opacityRange,
                     step: 0.01
                 ) { "\(Int(($0 * 100).rounded()))%" }
+                    .accessibilityLabel("不透明度")
             }
 
             WinSettingsCard(systemImage: "textformat.size", title: "文字大小", placement: .below) {
@@ -64,6 +69,7 @@ struct WatermarkPage: View {
                     in: WatermarkSettings.fontScaleRange,
                     step: 0.05
                 ) { "\(Int(($0 * 100).rounded()))%" }
+                    .accessibilityLabel("文字大小")
             }
 
             WinSettingsCard(
@@ -81,6 +87,21 @@ struct WatermarkPage: View {
         Binding(
             get: { store.settings.preset },
             set: { store.selectPreset($0) }
+        )
+    }
+
+    /// 输入时就截断，避免内存里的超长文案和落盘后被截短的版本不一致。
+    private var titleBinding: Binding<String> {
+        Binding(
+            get: { store.settings.customTitle },
+            set: { store.settings.customTitle = String($0.prefix(WatermarkSettings.maxCustomTitleLength)) }
+        )
+    }
+
+    private var subtitleBinding: Binding<String> {
+        Binding(
+            get: { store.settings.customSubtitle },
+            set: { store.settings.customSubtitle = String($0.prefix(WatermarkSettings.maxCustomSubtitleLength)) }
         )
     }
 }

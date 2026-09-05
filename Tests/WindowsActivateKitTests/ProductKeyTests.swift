@@ -33,8 +33,20 @@ final class ProductKeyTests: XCTestCase {
         XCTAssertFalse(ProductKey.format("!@#$%^").isEmpty)
     }
 
-    func testCompletionOnlyDependsOnLength() {
-        XCTAssertFalse(ProductKey.isComplete("abc"))
-        XCTAssertTrue(ProductKey.isComplete("aaaaa-bbbbb-ccccc-ddddd-eeeee"))
+    /// 只留分段形状的掩码：磁盘上不会留下用户真正输进去的字符。
+    func testMaskedKeepsShapeButNotContent() {
+        XCTAssertEqual(
+            ProductKey.masked("aaaaabbbbbcccccdddddeeeee"),
+            "•••••-•••••-•••••-•••••-•••••"
+        )
+        XCTAssertEqual(ProductKey.masked("abcdef"), "•••••-•")
+        XCTAssertEqual(ProductKey.masked(""), "")
+    }
+
+    func testMaskedDropsOriginalCharacters() {
+        let masked = ProductKey.masked("MYREAL-LICENSE-KEY99")
+        XCTAssertFalse(masked.contains("M"))
+        XCTAssertFalse(masked.contains("9"))
+        XCTAssertEqual(Set(masked), Set("•-"))
     }
 }

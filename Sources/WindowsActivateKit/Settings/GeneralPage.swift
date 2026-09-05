@@ -4,6 +4,7 @@ struct GeneralPage: View {
     @ObservedObject var store: SettingsStore
 
     @State private var launchAtLogin = false
+    @State private var isUpdatingLaunchAtLogin = false
     @State private var launchMessage: String?
 
     var body: some View {
@@ -27,7 +28,7 @@ struct GeneralPage: View {
             ) {
                 Toggle("登录时自动启动", isOn: launchBinding)
                     .toggleStyle(WinToggleStyle())
-                    .disabled(!LaunchAtLogin.isAvailable)
+                    .disabled(!LaunchAtLogin.isAvailable || isUpdatingLaunchAtLogin)
             }
 
             if let launchMessage {
@@ -51,6 +52,7 @@ struct GeneralPage: View {
                     options: OverlayLevel.allCases.map { .init($0, $0.displayName) },
                     width: 200
                 )
+                .accessibilityLabel("显示层级")
             }
 
             WinSettingsCard(
@@ -74,6 +76,7 @@ struct GeneralPage: View {
                     options: InterfaceTheme.allCases.map { .init($0, $0.displayName) },
                     width: 150
                 )
+                .accessibilityLabel("界面主题")
             }
         }
         .onAppear { launchAtLogin = LaunchAtLogin.isEnabled }
@@ -82,15 +85,23 @@ struct GeneralPage: View {
     private var launchBinding: Binding<Bool> {
         Binding(
             get: { launchAtLogin },
-            set: { newValue in
-                do {
-                    try LaunchAtLogin.set(newValue)
-                    launchMessage = nil
-                } catch {
-                    launchMessage = error.localizedDescription
-                }
-                launchAtLogin = LaunchAtLogin.isEnabled
-            }
+            set: { newValue in setLaunchAtLogin(newValue) }
         )
+    }
+
+    /// 不在视图更新周期里同步调 launchd：先给出乐观反馈，后台做完再回来对齐真实状态。
+    private func setLaunchAtLogin(_ enabled: Bool) {
+        launchAtLogin = enabled
+        isUpdatingLaunchAtLogin = true
+        Task {
+            do {
+                try await LaunchAtLogin.setInBackground(enabled)
+                launchMessage = nil
+            } catch {
+                launchMessage = error.localizedDescription
+            }
+            launchAtLogin = LaunchAtLogin.isEnabled
+            isUpdatingLaunchAtLogin = false
+        }
     }
 }

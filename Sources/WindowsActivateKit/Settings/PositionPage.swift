@@ -18,6 +18,7 @@ struct PositionPage: View {
                     options: WatermarkCorner.allCases.map { .init($0, $0.displayName) },
                     width: 150
                 )
+                .accessibilityLabel("贴靠位置")
             }
 
             WinSettingsCard(systemImage: "arrow.left.and.right", title: "水平边距", placement: .below) {
@@ -26,6 +27,7 @@ struct PositionPage: View {
                     in: WatermarkSettings.marginRange,
                     step: 1
                 ) { "\(Int($0)) pt" }
+                    .accessibilityLabel("水平边距")
             }
 
             WinSettingsCard(systemImage: "arrow.up.and.down", title: "垂直边距", placement: .below) {
@@ -34,6 +36,7 @@ struct PositionPage: View {
                     in: WatermarkSettings.marginRange,
                     step: 1
                 ) { "\(Int($0)) pt" }
+                    .accessibilityLabel("垂直边距")
             }
 
             WinSettingsCard(

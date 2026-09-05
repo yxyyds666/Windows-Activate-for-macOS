@@ -44,4 +44,26 @@ final class WatermarkOverlayControllerTests: XCTestCase {
 
         XCTAssertEqual(controller.overlayCount, min(1, NSScreen.screens.count))
     }
+
+    /// 设置窗口里换主题、在密钥框里敲字都会走到 apply，
+    /// 和水印无关的改动不该把每块屏幕上的窗口重排一遍。
+    func testUnchangedSettingsSkipRelayout() {
+        let controller = WatermarkOverlayController()
+        var settings = WatermarkSettings()
+
+        controller.apply(settings)
+        XCTAssertEqual(controller.refreshCount, 1, "第一次应用必须真的贴上去")
+
+        controller.apply(settings)
+        controller.apply(settings)
+        XCTAssertEqual(controller.refreshCount, 1, "值没变就不该重排")
+
+        settings.theme = .dark
+        controller.apply(settings)
+        XCTAssertEqual(controller.refreshCount, 1, "只影响设置窗口的字段也不该重排")
+
+        settings.opacity = 0.3
+        controller.apply(settings)
+        XCTAssertEqual(controller.refreshCount, 2, "水印相关的改动要重排")
+    }
 }

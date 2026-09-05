@@ -2,19 +2,14 @@ import SwiftUI
 
 /// WinUI 的开关：40×20 的胶囊，右侧带“开/关”文字，悬停时滑块变大、按下时压扁。
 public struct WinToggleStyle: ToggleStyle {
-    private let showsStateLabel: Bool
-
-    public init(showsStateLabel: Bool = true) {
-        self.showsStateLabel = showsStateLabel
-    }
+    public init() {}
 
     public func makeBody(configuration: Configuration) -> some View {
-        Content(configuration: configuration, showsStateLabel: showsStateLabel)
+        Content(configuration: configuration)
     }
 
     private struct Content: View {
         let configuration: ToggleStyleConfiguration
-        let showsStateLabel: Bool
 
         @Environment(\.isEnabled) private var isEnabled
         @State private var isHovering = false
@@ -29,12 +24,10 @@ public struct WinToggleStyle: ToggleStyle {
             } label: {
                 HStack(spacing: 12) {
                     track
-                    if showsStateLabel {
-                        Text(configuration.isOn ? "开" : "关")
-                            .font(WinText.body)
-                            .foregroundStyle(isEnabled ? WinColor.textPrimary : WinColor.textDisabled)
-                            .frame(width: 18, alignment: .leading)
-                    }
+                    Text(configuration.isOn ? "开" : "关")
+                        .font(WinText.body)
+                        .foregroundStyle(isEnabled ? WinColor.textPrimary : WinColor.textDisabled)
+                        .frame(width: 18, alignment: .leading)
                 }
                 .contentShape(Rectangle())
             }
